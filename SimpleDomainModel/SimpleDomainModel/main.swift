@@ -24,16 +24,34 @@ open class TestMe {
 // Money
 //
 public struct Money {
-  public var amount : Int
-  public var currency : String
-  
-  public func convert(_ to: String) -> Money {
-  }
-  
-  public func add(_ to: Money) -> Money {
-  }
-  public func subtract(_ from: Money) -> Money {
-  }
+    let exchangeRates = [
+        "USD": ["USD": 1.0/1.0, "GBP": 1.0/2.0, "EUR": 3.0/2.0, "CAN": 5.0/4.0],
+        "GBP": ["GBP": 1.0/1.0, "USD": 2.0/1.0, "EUR": 3.0/1.0, "CAN": 5.0/2.0],
+        "CAN": ["CAN": 1.0/1.0, "USD": 4.0/5.0, "GBP": 4.0/5.0, "EUR": 6.0/5.0],
+        "EUR": ["EUR": 1.0/1.0, "USD": 2.0/3.0, "GBP": 1.0/3.0, "CAN": 5.0/6.0]
+    ]
+    
+    public var amount : Int
+    public var currency : String
+    
+    public func convert(_ to: String) -> Money {
+        // should probably be adding some currency validation here but 🤷‍♂️
+        let rate: Double = exchangeRates[self.currency]![to]!
+        let amount = Int(Double(self.amount) * rate)
+        return Money(amount: amount, currency: to)
+    }
+    
+    public func add(_ to: Money) -> Money {
+        let selfInGiven = self.convert(to.currency)
+        let totAmount = to.amount + selfInGiven.amount
+        return Money(amount: totAmount, currency: to.currency)
+    }
+    
+    public func subtract(_ from: Money) -> Money {
+        let selfInGiven = self.convert(from.currency)
+        let totAmount = from.amount - selfInGiven.amount
+        return Money(amount: totAmount, currency: from.currency)
+    }
 }
 
 ////////////////////////////////////
@@ -49,9 +67,12 @@ open class Job {
   }
   
   public init(title : String, type : JobType) {
+    self.title = title
+    self.type = type
   }
   
   open func calculateIncome(_ hours: Int) -> Int {
+    return 0
   }
   
   open func raise(_ amt : Double) {
@@ -68,15 +89,17 @@ open class Person {
 
   fileprivate var _job : Job? = nil
   open var job : Job? {
-    get { }
+    get { return self._job }
     set(value) {
+        self._job = value
     }
   }
   
   fileprivate var _spouse : Person? = nil
   open var spouse : Person? {
-    get { }
+    get { return self._spouse }
     set(value) {
+        self._spouse = value
     }
   }
   
@@ -87,6 +110,7 @@ open class Person {
   }
   
   open func toString() -> String {
+    return ""
   }
 }
 
@@ -100,9 +124,11 @@ open class Family {
   }
   
   open func haveChild(_ child: Person) -> Bool {
+    return false
   }
   
   open func householdIncome() -> Int {
+    return 0
   }
 }
 
